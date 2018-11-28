@@ -1,6 +1,6 @@
 import os
 from flakon import SwaggerBlueprint
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from objectives.database import db, Objective
 
 HERE = os.path.dirname(__file__)
@@ -15,16 +15,17 @@ def get_objectives(user_id):
 
 
 @api.operation('createObjective')
-def create_objective(user_id):
-    req = request.json.items()
+def create_objective():
+    req = request.json
     objective = Objective()
-    objective.runner_id = user_id
-    objective.name = req.name
-    objective.target_distance = req.target_distance
-    objective.start_date = req.start_date
-    objective.end_date = req.end_date
+    objective.user_id = req['user_id']
+    objective.name = req['name']
+    objective.target_distance = req['target_distance']
+    objective.start_date = objective.to_datetime(req['start_date'])
+    objective.end_date = objective.to_datetime(req['end_date'])
+    db.session.add(objective)
     db.session.commit()
-    return objective.to_json()
+    return make_response("ok")
 
 
 @api.operation('getObjective')

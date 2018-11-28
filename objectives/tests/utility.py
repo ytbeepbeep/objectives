@@ -1,8 +1,9 @@
 import pytest
 import os
 import tempfile
-from dataservice.app import create_app
-from dataservice.database import db, User
+from datetime import datetime, timedelta
+from objectives.app import create_app
+from objectives.database import db, Objective
 
 
 @pytest.fixture
@@ -29,14 +30,11 @@ def client():
     os.unlink(app.config['DATABASE'])
 
 
-def new_user(email=None):
-    user = User()
-    user.email = email if email is not None else 'mario@rossi.it'
-    user.firstname = 'mario'
-    user.lastname = 'rossi'
-    user.age = 23
-    user.weight = 70
-    user.rest_hr = 60
-    user.max_hr = 120
-    user.vo2max = 0
-    return user
+def new_objective(user_id=1):
+    objective = Objective()
+    objective.name = "Test"
+    objective.target_distance = 100.0
+    objective.start_date = datetime.now()
+    objective.end_date = datetime.now() + timedelta(days=7)
+    objective.user_id = user_id
+    return objective

@@ -13,7 +13,11 @@ class Objective(db.Model):
     target_distance = db.Column(db.Float)
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
-    runner_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer)
+
+    @staticmethod
+    def to_datetime(date_str):
+        return datetime.fromtimestamp(float(date_str))
 
     ''''
     @property
@@ -29,7 +33,7 @@ class Objective(db.Model):
     def to_json(self):
         res = {}
         for attr in ('id', 'name', 'target_distance', 'start_date',
-                     'end_date', 'runner_id'):
+                     'end_date', 'user_id'):
             value = getattr(self, attr)
             if isinstance(value, datetime):
                 value = value.timestamp()
