@@ -1,17 +1,11 @@
 import os
 from flakon import SwaggerBlueprint
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, abort
 from objectives.database import db, Objective
 
 HERE = os.path.dirname(__file__)
 YML = os.path.join(HERE, '..', 'static', 'api.yaml')
 api = SwaggerBlueprint('API', __name__, swagger_spec=YML)
-
-
-@api.operation('getObjectives')
-def get_objectives(user_id):
-    objectives = db.session.query(Objective).filter(Objective.runner_id == user_id)
-    return jsonify([objective.to_json() for objective in objectives])
 
 
 @api.operation('createObjective')
@@ -30,5 +24,17 @@ def create_objective():
 
 @api.operation('getObjective')
 def get_objective(objective_id):
-    objective = db.session.query(Objective).filter(Objective.id == objective_id)
+    objective = db.session.query(Objective).filter(Objective.id == objective_id).first()
+    if not objective:
+        abort(404)
     return objective.to_json()
+
+
+@api.operation('getObjectives')
+def get_objectives():
+    user_id = request.args.get("user_id")
+    if not user_id:
+        abort(400)
+
+    objectives = db.session.query(Objective).filter(Objective.user_id == user_id)
+    return jsonify([objective.to_json() for objective in objectives])

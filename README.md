@@ -6,9 +6,29 @@ _Manage the user objectives_
 
 _This microservice works on port 5004._
 
-## Install
-- `pip install -r requirements.txt`
-- `python setup.py develop`
+## First setup
+Export the address and the port of the [data-service](https://github.com/ytbeepbeep/data-service) microservice,
+the default is `127.0.0.1:5002`.
+
+A smart way to do this is to create a file `variables.sh` in the project root, as follows.
+```
+#!/bin/bash
+export DATA_SERVICE="127.0.0.1:5002"
+```
+You can load the variables with `source variables.sh`.
+
+#### Install for development
+```
+pip install -r requirements.txt
+pip install pytest pytest-cov
+python setup.py develop
+```
+
+#### Install for production
+```
+pip install -r requirements.txt
+python setup.py install
+```
 
 
 ## Run the microservice
