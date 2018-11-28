@@ -1,0 +1,4 @@
+flask
+flask_sqlalchemy
+flakon
+requests_mock
