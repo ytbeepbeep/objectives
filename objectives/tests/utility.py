@@ -33,8 +33,24 @@ def client():
 def new_objective(user_id=1):
     objective = Objective()
     objective.name = "Test"
-    objective.target_distance = 100.0
+    objective.target_distance = 100000.0
     objective.start_date = datetime.now()
     objective.end_date = datetime.now() + timedelta(days=7)
     objective.user_id = user_id
     return objective
+
+
+def new_run_json(run_id=1, date=datetime.now()):
+    return {
+        "id": run_id,
+        "user_id": 1,
+        "strava_id": 1956250882+run_id,
+        "title": "Test Run",
+        "distance": 50000.0,
+        "description": None,
+        "average_speed": 10.0,
+        "elapsed_time": 5000.0,
+        "total_elevation_gain": 3.0,
+        "average_heartrate": None,
+        "start_date": date,
+    }

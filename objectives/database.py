@@ -23,10 +23,10 @@ class Objective(db.Model):
 
     @property
     def completion(self):
-        runs = requests.get(DATASERVICE + '/runs?user_id='+str(self.user_id) +
-                            '&from_date='+self.start_date.timestamp() +
-                            '&to_date='+self.start_date.timestamp()).json()
-        return min(round(100 * (sum([run.distance for run in runs]) / self.target_distance), 2), 100)
+        runs = requests.get(DATASERVICE + '/runs?user_id='+str(self.user_id)).json()
+        runs = list(filter(
+            lambda run: self.start_date.timestamp() < run['start_date'] < self.end_date.timestamp(), runs))
+        return min(round(100 * (sum([run['distance'] for run in runs]) / self.target_distance), 2), 100)
 
     def to_json(self):
         res = {}
@@ -36,5 +36,5 @@ class Objective(db.Model):
             if isinstance(value, datetime):
                 value = value.timestamp()
             res[attr] = value
-            #res['completion'] = self.completion()
+            res['completion'] = self.completion
         return res
