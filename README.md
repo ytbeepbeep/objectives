@@ -14,6 +14,7 @@ A smart way to do this is to create a file `variables.sh` in the project root, a
 ```
 #!/bin/bash
 export DATA_SERVICE="127.0.0.1:5002"
+export OBJECTIVE_SERVICE="127.0.0.1:5004"
 ```
 You can load the variables with `source variables.sh`.
 
