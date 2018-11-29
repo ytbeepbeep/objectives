@@ -6,7 +6,7 @@ from objectives.database import db, Objective
 
 
 DATASERVICE=os.environ['DATA_SERVICE']
-
+OBJECTIVESERVICE=os.environ['OBJECTIVE_SERVICE']
 
 def test_objective(client):
     tested_app, app = client
@@ -103,7 +103,7 @@ def test_completion(client):
         assert first_objective['completion'] == expected_completion
 
 
-def test_delete_user(client):
+def test_delete_objective_by_user(client):
     tested_app, app = client
 
     # Add a new objective in database
@@ -115,7 +115,7 @@ def test_delete_user(client):
         objective = db.session.query(Objective).first()
 
     with requests_mock.mock() as m:
-        m.get(DATASERVICE + '/objectives', json=[])
+        m.get(OBJECTIVESERVICE + '/objectives', json=[])
 
         assert tested_app.delete('/objectives?user_id=1').status_code == 200
 
