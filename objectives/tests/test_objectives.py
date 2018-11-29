@@ -112,17 +112,17 @@ def test_delete_user(client):
         db.session.add(objective)
         db.session.add(objective)
         db.session.commit()
+        objective = db.session.query(Objective).first()
 
     with requests_mock.mock() as m:
-        m.delete(DATASERVICE + '/objectives', json=[])
+        m.get(DATASERVICE + '/objectives', json=[])
+
+        assert tested_app.delete('/objectives?user_id=1').status_code == 200
 
         # Check that the objective exists for the user
         user_objectives = tested_app.get('/objectives='+str(objective.user_id)).json
-        assert user_objectives[0] == {}
+        assert user_objectives is None
 
         # Try to retrieve the objective list without passing the user
         assert tested_app.get('/objectives').status_code == 400
-
-        # Try to retrieve the objective list of a non existing user
-        user_objectives = tested_app.get('/objectives?user_id=6273').json
-        assert len(user_objectives) == 0
+        assert tested_app.get('/objectives?hunwkeb=8934').status_code == 400
