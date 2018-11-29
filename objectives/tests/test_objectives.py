@@ -6,7 +6,7 @@ from objectives.database import db, Objective
 
 
 DATASERVICE=os.environ['DATA_SERVICE']
-OBJECTIVESERVICE=os.environ['OBJECTIVE_SERVICE']
+
 
 def test_objective(client):
     tested_app, app = client
@@ -103,7 +103,7 @@ def test_completion(client):
         assert first_objective['completion'] == expected_completion
 
 
-def test_delete_objective_by_user(client):
+def test_delete(client):
     tested_app, app = client
 
     # Add a new objective in database
@@ -114,15 +114,13 @@ def test_delete_objective_by_user(client):
         db.session.commit()
         objective = db.session.query(Objective).first()
 
-    with requests_mock.mock() as m:
-        m.get(OBJECTIVESERVICE + '/objectives', json=[])
+    # Delete it
+    assert tested_app.delete('/objectives?user_id=1').status_code == 200
 
-        assert tested_app.delete('/objectives?user_id=1').status_code == 200
+    # Check that it doesn't exist in the database
+    with app.app_context():
+        assert not db.session.query(Objective).filter(Objective.id == objective.id).first()
 
-        # Check that the objective exists for the user
-        user_objectives = tested_app.get('/objectives='+str(objective.user_id)).json
-        assert user_objectives is None
-
-        # Try to retrieve the objective list without passing the user
-        assert tested_app.get('/objectives').status_code == 400
-        assert tested_app.get('/objectives?hunwkeb=8934').status_code == 400
+    # Check that the objective doesn't exist for the user
+    user_objectives = tested_app.get('/objectives?user_id='+str(objective.user_id)).json
+    assert len(user_objectives) == 0
