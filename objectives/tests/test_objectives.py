@@ -101,3 +101,28 @@ def test_completion(client):
         assert first_objective['completion'] == objective.completion
         expected_completion = min(round(100 * run_ok['distance'] / objective.target_distance, 2), 100)
         assert first_objective['completion'] == expected_completion
+
+
+def test_delete_user(client):
+    tested_app, app = client
+
+    # Add a new objective in database
+    objective = new_objective()
+    with app.app_context():
+        db.session.add(objective)
+        db.session.add(objective)
+        db.session.commit()
+
+    with requests_mock.mock() as m:
+        m.delete(DATASERVICE + '/objectives', json=[])
+
+        # Check that the objective exists for the user
+        user_objectives = tested_app.get('/objectives='+str(objective.user_id)).json
+        assert user_objectives[0] == {}
+
+        # Try to retrieve the objective list without passing the user
+        assert tested_app.get('/objectives').status_code == 400
+
+        # Try to retrieve the objective list of a non existing user
+        user_objectives = tested_app.get('/objectives?user_id=6273').json
+        assert len(user_objectives) == 0

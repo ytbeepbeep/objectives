@@ -77,6 +77,24 @@ paths:
             $ref: '#/definitions/Objective'
         '400':
           description: Bad Request
+    delete:
+      tags:
+        - objective
+      summary: Delete all objectives by user
+      operationId: deleteObjectives
+      description: This can be done only by a connected user id
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Objectives successfully deleted
+        '400':
+          description: Bad request
+        '404':
+          description: The user doesn't exist
   '/objectives/{objective_id}':
     get:
       summary: Get object id of the user id

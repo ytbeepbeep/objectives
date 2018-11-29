@@ -38,3 +38,17 @@ def get_objectives():
 
     objectives = db.session.query(Objective).filter(Objective.user_id == user_id)
     return jsonify([objective.to_json() for objective in objectives])
+
+@api.operation('deleteObjectives')
+def delete_objectives():
+    user_id = request.args.get('user_id')
+    if not user_id:
+        abort(400)
+    objectives = db.session.query(Objective).filter(Objective.user_id == user_id).all()
+    if not objectives:
+        return abort(404)
+
+    for obj in objectives:
+        db.session.delete(obj)
+    db.session.commit()
+    return make_response('OK')
